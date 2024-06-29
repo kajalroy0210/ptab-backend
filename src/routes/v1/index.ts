@@ -6,7 +6,7 @@ import config from '../../config/config';
 
 const router = express.Router();
 
-const defaultRoutes = [
+const defaultRoutes = [ 
   {
     path: '/auth',
     route: authRoute

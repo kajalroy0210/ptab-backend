@@ -6,36 +6,84 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
-  email           String   @unique
-  name            String?
-  password        String
+  id                        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  name                      String    @unique
+  email                     String    @unique
+  password                  String
   role            Role     @default(USER)
   isEmailVerified Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  Token           Token[]
+  user_type                 String?
+  branch_name               String?
+  membership_no             String?
+  type_of_membership        String?
+  form_no                   String?
+  name_of_the_firm          String?
+  type_of_firm              String?
+  address_of_the_firm       String?
+  holding_no                String?
+  street_name               String?
+  post_office               String?
+  district                  String?
+  ps                        String?
+  pin                       String?
+  dl_no                     String?
+  valid_upto                DateTime?
+  proprietor_or_partner     String?
+  proprietor_contact_no     String?
+  authorised_representative String?
+  representative_contact_no String?
+  recommended_by            String?
+  designation               String?
+  membership_status         String?
+  approved_by               String?
+  Token                     Token[]
+  bills                     Bill[]
 }
 
+model Bill {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt          DateTime @default(now())
+  member_id          User     @relation(fields: [userId], references: [id])
+  account_head       String
+  income_or_expenses String
+  bill_date          DateTime
+  membership_number  String
+  name_of_the_member String
+  address            String
+  admission_fees     String
+  subscription       String
+  donation           String
+  period_from        DateTime
+  period_to          DateTime
+  remarks            String
+  total_amt          Float
+  userId             String   @db.ObjectId
+}
+
+
+
 model Token {
-  id          Int       @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   token       String
   type        TokenType
   expires     DateTime
   blacklisted Boolean
   createdAt   DateTime  @default(now())
   user        User      @relation(fields: [userId], references: [id])
-  userId      Int
+  userId      String    @db.ObjectId
 }
 
 enum Role {
   USER
   ADMIN
+  BRANCH_ADMIN
 }
 
 enum TokenType {

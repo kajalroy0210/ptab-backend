@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import { encryptPassword } from '../utils/encryption';
+import { string } from 'joi';
 
 /**
  * Create a user
@@ -12,8 +13,33 @@ import { encryptPassword } from '../utils/encryption';
 const createUser = async (
   email: string,
   password: string,
-  name?: string,
-  role: Role = Role.USER
+  name: string,
+  role: Role = Role.USER,
+  isEmailVerified: boolean,
+  user_type: string,
+  branch_name: string,
+  membership_no: string,
+  type_of_membership: string,
+  form_no: string,
+  name_of_the_firm: string,
+  type_of_firm: string,
+  address_of_the_firm: string,
+  holding_no: string,
+  street_name: string,
+  post_office: string,
+  district: string,
+  ps: string,
+  pin: string,
+  dl_no: string,
+  valid_upto: Date,
+  proprietor_or_partner: string,
+  proprietor_contact_no: string,
+  authorised_representative: string,
+  representative_contact_no: string,
+  recommended_by: string,
+  designation: string,
+  membership_status: string,
+  approved_by: string,
 ): Promise<User> => {
   if (await getUserByEmail(email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
@@ -23,7 +49,32 @@ const createUser = async (
       email,
       name,
       password: await encryptPassword(password),
-      role
+      role,
+      isEmailVerified ,
+      user_type,
+      branch_name,
+      membership_no,
+      type_of_membership,
+      form_no,
+      name_of_the_firm,
+      type_of_firm,
+      address_of_the_firm,
+      holding_no,
+      street_name,
+      post_office,
+      district,
+      ps,
+      pin,
+      dl_no,
+      valid_upto,
+      proprietor_or_partner,
+      proprietor_contact_no,
+      authorised_representative,
+      representative_contact_no,
+      recommended_by,
+      designation,
+      membership_status,
+      approved_by,
     }
   });
 };
@@ -77,7 +128,7 @@ const queryUsers = async <Key extends keyof User>(
  * @returns {Promise<Pick<User, Key> | null>}
  */
 const getUserById = async <Key extends keyof User>(
-  id: number,
+  id: string,
   keys: Key[] = [
     'id',
     'email',
@@ -127,7 +178,7 @@ const getUserByEmail = async <Key extends keyof User>(
  * @returns {Promise<User>}
  */
 const updateUserById = async <Key extends keyof User>(
-  userId: number,
+  userId: string,
   updateBody: Prisma.UserUpdateInput,
   keys: Key[] = ['id', 'email', 'name', 'role'] as Key[]
 ): Promise<Pick<User, Key> | null> => {
@@ -151,7 +202,7 @@ const updateUserById = async <Key extends keyof User>(
  * @param {ObjectId} userId
  * @returns {Promise<User>}
  */
-const deleteUserById = async (userId: number): Promise<User> => {
+const deleteUserById = async (userId: string): Promise<User> => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
